@@ -1,5 +1,5 @@
 const contentDiv = document.getElementById("content"); 
-window.onload = handleSignedOutUser();
+window.onload = goPath('login');
 
 firebase.initializeApp(config);
 
@@ -104,11 +104,11 @@ firebase.auth().onAuthStateChanged( function(firebaseUser) {
   if (firebaseUser) {
     console.log(firebaseUser);
     btnLogOut.style.visibility = "visible";
-    handleSignedInUser(firebaseUser);
+    goPath('timeline');
   } else {
     console.log("not logged in");
     btnLogOut.style.visibility = "hidden";
-    handleSignedOutUser();
+    goPath('login');
   }
 });
   
