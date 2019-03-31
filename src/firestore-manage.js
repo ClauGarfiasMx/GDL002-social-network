@@ -12,29 +12,30 @@ let db = firebase.firestore();
 
 
 //LEARNING COLLECTION
-  db.collection("theClaudiaLearningCollection").add({ //creates COLLECTION "users" then adds a DOCUMENT into it
-    first: "Claudia",
-    last: "Garfias",
-    born: 1914,
-    profilePic: "https://claudiagarfias.works/contents/uploads/media/claudia-garfias-web-developer-profile-photo.jpg?"
-})
-.then(function(docRef) {
-    console.log("Document written with ID: ", docRef.id); //DOCUMENT ID
-})
-.catch(function(error) {
-    console.error("Error adding document: ", error.code);//Catches ERROR
-});
-
-// //POSTS COLLECTION
-// db.collection("ourSocialAppPosts").add({ //creates COLLECTION "users" then adds a DOCUMENT into it
-//     postText: "Lorem Ipsum Texto de la publicación",
-//     //postImage: "https://claudiagarfias.works/contents/uploads/media/claudia-garfias-web-developer-profile-photo.jpg?",
-//     likes: [],
-//     postvisibility: "public"
+//   db.collection("theClaudiaLearningCollection").add({ //creates COLLECTION "users" then adds a DOCUMENT into it
+//     first: "Claudia",
+//     last: "Garfias",
+//     born: 1914,
+//     profilePic: "https://claudiagarfias.works/contents/uploads/media/claudia-garfias-web-developer-profile-photo.jpg?"
 // })
 // .then(function(docRef) {
-//     console.log("ID del POST: ", docRef.id); //DOCUMENT ID
+//     console.log("Document written with ID: ", docRef.id); //DOCUMENT ID
 // })
 // .catch(function(error) {
 //     console.error("Error adding document: ", error.code);//Catches ERROR
 // });
+
+//POSTS COLLECTION
+db.collection("post_test_claudia").add({ //creates COLLECTION "users" then adds a DOCUMENT into it
+    user: "firebaseUser.email",
+    postText: "Lorem Ipsum Texto de la publicación",
+    postImage: "https://claudiagarfias.works/contents/uploads/media/claudia-garfias-web-developer-profile-photo.jpg?",
+    likes: 0,
+    visibility: "public"
+})
+.then(function(docRef) {
+    console.log("ID del POST: ", docRef.id); //DOCUMENT ID
+})
+.catch(function(error) {
+    console.error("Error adding document: ", error.code);//Catches ERROR
+});

@@ -1,5 +1,5 @@
 const contentDiv = document.getElementById("content"); 
-window.onload = goPath('login');
+window.onload = goPath("login");
 
 firebase.initializeApp(config);
 
@@ -9,9 +9,6 @@ const txtPassword = document.getElementById("txtPassword");
 const btnLogin = document.getElementById("btnLogin");
 const btnSignUp = document.getElementById("btnSignUp");
 const btnLogOut = document.getElementById("btnLogOut");
-
-
-
 let errorDiv = document.getElementById("error");
 
 /**
@@ -19,7 +16,7 @@ let errorDiv = document.getElementById("error");
  * to a descriptive message of the error in spanish
  * @param {string} errorCode 
  */
-function codeMessageMapper(errorCode){
+const codeMessageMapper = (errorCode) => {
   let message = "";
   switch(errorCode){
     case "auth/invalid-email":
@@ -52,7 +49,7 @@ function codeMessageMapper(errorCode){
  * @param {string} authEvent signin or createuser 
  * @param {DOM element} errorSection DOM element where errors messages are shown
  */
-function authEvent(email, password, auth, authEvent, errorSection) {
+const authEvent = (email, password, auth, authEvent, errorSection) => {
 
   let promise;
 
@@ -63,31 +60,32 @@ function authEvent(email, password, auth, authEvent, errorSection) {
     promise = auth.createUserWithEmailAndPassword(email, password);
   }
 
-  promise.then( function(){
+  promise.then( () => {
     console.log("DEBUG_MSG auth event");
     errorSection.style.display = "none";
-  }).catch(function (error) {
+  }).catch((error) => {
     errorSection.style.display = "block";
 
     errorSection.innerHTML = codeMessageMapper(error.code);
     console.log(error.message);
   });
+  
 }
 
-btnLogin.addEventListener("click", function(event) {
+btnLogin.addEventListener("click", (event) => {
   authEvent(txtEmail.value, txtPassword.value, firebase.auth(), "signin", errorDiv);
 });
 
-btnSignUp.addEventListener("click", function(event){
+btnSignUp.addEventListener("click", (event) => {
   authEvent(txtEmail.value, txtPassword.value, firebase.auth(), "createuser", errorDiv);
 });
 
 
   // add log out event listener
-  // logs out the user and refreshes window to #login
+  // logs out the user and "hard" refreshes window to #login
   btnLogOut.addEventListener("click", event => {
     firebase.auth().signOut();
-    location.reload();
+    location.reload(true);
 
   });
 
@@ -97,21 +95,32 @@ btnSignUp.addEventListener("click", function(event){
  * firebaseUser is an object with all information of a login user
  * if the user logs out or is not sign in then firebaseUser is null
  */
-firebase.auth().onAuthStateChanged( function(firebaseUser) {
+
+firebase.auth().onAuthStateChanged( (firebaseUser) => {
   // TODO create functions handleSignedInUser and handleSignedOutUser
   console.log("DEBUG_MSG: auth state change event");
-  
+
   if (firebaseUser) {
-    console.log(firebaseUser);
+    //console.log(firebaseUser);
     btnLogOut.style.visibility = "visible";
-    goPath('timeline');
+    goPath("timeline");
+
+    //gets firebaseUser DATA for later assignment
+    let firebaseUserInfo = {
+      userID: `${firebaseUser.uid}`,
+      userEmail: `${firebaseUser.email}`,
+      userName: `${firebaseUser.displayName}`
+    }
+  console.log(firebaseUserInfo);
+    
   } else {
     console.log("not logged in");
     btnLogOut.style.visibility = "hidden";
-    goPath('login');
+    goPath("login");
   }
+    
 });
-  
+
 
 
 // Navigate whenever the fragment identifier value changes.
