@@ -1,121 +1,49 @@
-const contentDiv = document.getElementById("content"); 
-window.onload = pathToWindow('#login');
+//import { timeLineTemplate } from './templates/timelineTemplate';
 
-firebase.initializeApp(config);
-
-// Get elements
-const txtEmail = document.getElementById("txtEmail");
-const txtPassword = document.getElementById("txtPassword");
-const btnLogin = document.getElementById("btnLogin");
-const btnSignUp = document.getElementById("btnSignUp");
-const btnLogOut = document.getElementById("btnLogOut");
+const USERS_COLLECTION = "users_tests_monse";
 
 
-
-let errorDiv = document.getElementById("error");
-
-/**
- * Function that maps firebase error code from firebase API
- * to a descriptive message of the error in spanish
- * @param {string} errorCode 
- */
-function codeMessageMapper(errorCode){
-  let message = "";
-  switch(errorCode){
-    case "auth/invalid-email":
-      message = "Correo Electrónico inválido";
-      break;
-    case "auth/user-not-found":
-      message = "Correo Electrónico no registrado";
-      break;
-    case "auth/wrong-password":
-      message ="Contraseña incorrecta";
-      break;
-    case "auth/email-already-in-use":
-      message = "Este correo eléctrónico ya está registrado, intenta con otro";
-      break;
-    case "auth/weak-password":
-      message = "La contraseña debe tener al menos 6 caracteres";
-      break;
-    default:
-
-  }
-
-  return message;
+function CreatePost(mail, textval, isPublic) {
+    //TODO make a function to return current date
+    return {
+        email:mail,
+        text: textval,
+        is_public: isPublic,
+        date : "30/03/2019"
+    };
 }
 
-/**
- * Wrapper for firebase authentication services.
- * @param {string} email 
- * @param {string} password 
- * @param {firebase auth service interface} object returned from firebase.auth() 
- * @param {string} authEvent signin or createuser 
- * @param {DOM element} errorSection DOM element where errors messages are shown
- */
-function authEvent(email, password, auth, authEvent, errorSection) {
+function handleSignedInUser(firebaseUser) {
+    location.hash = "#timeline";
 
-  let promise;
+    let userEmail = firebaseUser.email; 
 
-  if (authEvent === "signin") {
-    promise = auth.signInWithEmailAndPassword(email, password);
-  }
-  else if (authEvent === "createuser") {
-    promise = auth.createUserWithEmailAndPassword(email, password);
-  }
+    let timeLineTemplate = timelineTemplate();
+    // modifies timeline
+    contentDiv.innerHTML = timeLineTemplate;
 
-  promise.then( function(){
-    console.log("DEBUG_MSG auth event");
-    errorSection.style.display = "none";
-  }).catch(function (error) {
-    errorSection.style.display = "block";
-
-    errorSection.innerHTML = codeMessageMapper(error.code);
-    console.log(error.message);
-  });
+    let db = firebase.firestore();
+    
+    document.getElementById("button-post").addEventListener("click", function () {
+        let post = document.getElementById("input-post").value;
+        if (post.length >0) {
+            //TODO: extract if post is public or not from radio box
+            
+            db.collection(`${USERS_COLLECTION}/user_${userEmail}/myPosts/`).add(CreatePost(userEmail, post, true));
+        }
+        else{
+            // TODO show message that post is empty
+        }
+    });
 }
 
-btnLogin.addEventListener("click", function(event) {
-  authEvent(txtEmail.value, txtPassword.value, firebase.auth(), "signin", errorDiv);
-});
 
-btnSignUp.addEventListener("click", function(event){
-  authEvent(txtEmail.value, txtPassword.value, firebase.auth(), "createuser", errorDiv);
-});
+function handleSignedOutUser() {
+    location.hash = "#login";
+}
 
-
-  // add log out event listener
-  // logs out the user and refreshes window to #login
-  btnLogOut.addEventListener("click", event => {
-    firebase.auth().signOut();
-    location.reload();
-
-  });
-
-
-// add realtime listener
-/**
- * firebaseUser is an object with all information of a login user
- * if the user logs out or is not sign in then firebaseUser is null
- */
-firebase.auth().onAuthStateChanged( function(firebaseUser) {
-  // TODO create functions handleSignedInUser and handleSignedOutUser
-  console.log("DEBUG_MSG: auth state change event");
-  
-  if (firebaseUser) {
-    console.log(firebaseUser);
-    btnLogOut.style.visibility = "visible";
-    pathToWindow('#timeline')
-    handleSignedInUser(firebaseUser);
-  } else {
-    console.log("not logged in");
-    btnLogOut.style.visibility = "hidden";
-    handleSignedOutUser();
-  }
-});
-  
-
-
-// Navigate whenever the fragment identifier value changes.
-//TODO
-// window.addEventListener("hashchange", router);
-// window.addEventListener("load", router);
+function createUser(email) {
+    let db = firebase.firestore();
+    let usersRef = db.collection(USERS_COLLECTION);
+    usersRef.doc(`user_${email}`).set({email: email});
+}
