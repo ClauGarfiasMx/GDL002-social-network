@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const pathToWindow = (path) => {
     location.hash = `${path}`;
 }
@@ -61,7 +60,6 @@ const handleSignedInUser = (firebaseUser) => {
                             Nombre: ${firebaseUser.displayName}`;
 }
 
-=======
 //import { timeLineTemplate } from './templates/timelineTemplate';
 
 const USERS_COLLECTION = "users_tests_monse";
@@ -111,4 +109,3 @@ function createUser(email) {
     let usersRef = db.collection(USERS_COLLECTION);
     usersRef.doc(`user_${email}`).set({email: email});
 }
->>>>>>> 84eb4f9285cef97b28a3d18cbe3dd05118000eab
